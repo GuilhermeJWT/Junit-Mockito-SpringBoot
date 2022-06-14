@@ -5,11 +5,10 @@ import br.com.systemsgs.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +31,12 @@ public class UserController {
     public ResponseEntity<List<ModelUserDTO>> findAll(){
         return ResponseEntity.ok().body(service.findAll().
                 stream().map(x -> mapper.map(x, ModelUserDTO.class)).collect(Collectors.toList()));
+    }
+
+    @PostMapping
+    public ResponseEntity<ModelUserDTO> create(@RequestBody ModelUserDTO modelUserDTO){
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(service.create(modelUserDTO).getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
 }

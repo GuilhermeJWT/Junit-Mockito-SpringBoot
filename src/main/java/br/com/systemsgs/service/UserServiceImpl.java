@@ -1,8 +1,10 @@
 package br.com.systemsgs.service;
 
 import br.com.systemsgs.domain.ModelUser;
+import br.com.systemsgs.dto.ModelUserDTO;
 import br.com.systemsgs.exception.ObjectNotFoundException;
 import br.com.systemsgs.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private ModelMapper mapper;
+
     @Override
     public ModelUser findById(Integer id) {
         Optional<ModelUser> user = repository.findById(id);
@@ -23,6 +28,11 @@ public class UserServiceImpl implements UserService{
 
     public List<ModelUser> findAll(){
         return repository.findAll();
+    }
+
+    @Override
+    public ModelUser create(ModelUserDTO dto) {
+        return repository.save(mapper.map(dto, ModelUser.class));
     }
 
 }
