@@ -18,6 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServiceImplTest {
 
+    public static final int ID = 1;
+    public static final String NAME = "Guilherme";
+    public static final String EMAIL = "gui@gmail.com";
+    public static final String PASSWORD = "123";
     @InjectMocks
     private UserServiceImpl service;
 
@@ -36,6 +40,7 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        startUser();
     }
 
     @Test
@@ -57,4 +62,11 @@ class UserServiceImplTest {
     @Test
     void delete() {
     }
+
+    private void startUser(){
+        user = new ModelUser(ID, NAME, EMAIL, PASSWORD);
+        userDTO = new ModelUserDTO(ID, NAME, EMAIL, PASSWORD);
+        optionalUser = Optional.of(new ModelUser(ID, NAME, EMAIL, PASSWORD));
+    }
+
 }
