@@ -1,5 +1,6 @@
 package br.com.systemsgs.controller;
 
+import br.com.systemsgs.domain.ModelUser;
 import br.com.systemsgs.dto.ModelUserDTO;
 import br.com.systemsgs.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -16,13 +17,14 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/user")
 public class UserController {
 
+    public static final String ID = "/{id}";
     @Autowired
     private UserService service;
 
     @Autowired
     private ModelMapper mapper;
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = ID)
     public ResponseEntity<ModelUserDTO> findById(@PathVariable Integer id){
         return ResponseEntity.ok().body(mapper.map(service.findById(id), ModelUserDTO.class));
     }
@@ -37,6 +39,20 @@ public class UserController {
     public ResponseEntity<ModelUserDTO> create(@RequestBody ModelUserDTO modelUserDTO){
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(service.create(modelUserDTO).getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @PutMapping(value = ID)
+    public ResponseEntity<ModelUserDTO> update(@PathVariable Integer id, @RequestBody ModelUserDTO modelUserDTO){
+        modelUserDTO.setId(id);
+        ModelUser user = service.update(modelUserDTO);
+        return ResponseEntity.ok().body(mapper.map(user, ModelUserDTO.class));
+    }
+
+    @DeleteMapping(value = ID)
+    public ResponseEntity<ModelUserDTO> delete(@PathVariable Integer id){
+        service.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
