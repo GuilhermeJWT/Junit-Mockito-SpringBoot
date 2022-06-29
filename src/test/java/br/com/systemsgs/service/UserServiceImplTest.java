@@ -2,6 +2,7 @@ package br.com.systemsgs.service;
 
 import br.com.systemsgs.domain.ModelUser;
 import br.com.systemsgs.dto.ModelUserDTO;
+import br.com.systemsgs.exception.ObjectNotFoundException;
 import br.com.systemsgs.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,17 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não Encontrado!"));
+        try{
+            service.findById(ID);
+        }catch(Exception exception){
+            assertEquals(ObjectNotFoundException.class, exception.getClass());
+            assertEquals("Objeto não Encontrado!", exception.getMessage());
+        }
     }
 
     @Test
