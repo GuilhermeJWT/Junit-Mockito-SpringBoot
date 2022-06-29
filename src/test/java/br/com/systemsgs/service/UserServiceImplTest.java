@@ -13,12 +13,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class UserServiceImplTest {
 
-    public static final int ID = 1;
+    public static final Integer ID = 1;
     public static final String NAME = "Guilherme";
     public static final String EMAIL = "gui@gmail.com";
     public static final String PASSWORD = "123";
@@ -44,7 +47,17 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findById() {
+    void whenFindByIdThenReturnAnUserInstance() {
+        when(repository.findById(anyInt())).thenReturn(optionalUser);
+
+        ModelUser response = service.findById(ID);
+
+        assertNotNull(response);
+        assertEquals(ModelUser.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
     }
 
     @Test
