@@ -2,6 +2,7 @@ package br.com.systemsgs.service;
 
 import br.com.systemsgs.domain.ModelUser;
 import br.com.systemsgs.dto.ModelUserDTO;
+import br.com.systemsgs.exception.DataIntegratyViolationException;
 import br.com.systemsgs.exception.ObjectNotFoundException;
 import br.com.systemsgs.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -104,6 +104,19 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenCreateThenReturnAnyDataIntegratyViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try{
+            optionalUser.get().setId(2);
+            service.create(userDTO);
+        }catch(Exception exception){
+            assertEquals(DataIntegratyViolationException.class, exception.getClass());
+            assertEquals("E-mail já cadastrado no sistema", exception.getMessage());
+        }
     }
 
     @Test
