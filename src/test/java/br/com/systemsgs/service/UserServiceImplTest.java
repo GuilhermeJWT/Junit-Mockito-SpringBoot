@@ -29,6 +29,7 @@ class UserServiceImplTest {
     public static final String EMAIL = "gui@gmail.com";
     public static final String PASSWORD = "123";
     public static final int INDEX = 0;
+    public static final String EMAIL_JA_CADASTRADO = "E-mail já cadastrado no sistema";
 
     @InjectMocks
     private UserServiceImpl service;
@@ -115,7 +116,7 @@ class UserServiceImplTest {
             service.create(userDTO);
         }catch(Exception exception){
             assertEquals(DataIntegratyViolationException.class, exception.getClass());
-            assertEquals("E-mail já cadastrado no sistema", exception.getMessage());
+            assertEquals(EMAIL_JA_CADASTRADO, exception.getMessage());
         }
     }
 
@@ -131,6 +132,19 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenUpdateThenReturnAnyDataIntegratyViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try{
+            optionalUser.get().setId(2);
+            service.update(userDTO);
+        }catch(Exception exception){
+            assertEquals(DataIntegratyViolationException.class, exception.getClass());
+            assertEquals(EMAIL_JA_CADASTRADO, exception.getMessage());
+        }
     }
 
     @Test
